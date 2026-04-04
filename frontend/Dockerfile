@@ -6,11 +6,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Production stage — serve with Express (reads $PORT from Railway)
+# Production stage — serve with Express (reads $PORT from Railway env var)
 FROM node:20-alpine
 WORKDIR /app
-RUN npm install express
+# Install express for serving
+RUN npm init -y && npm install express
 COPY --from=build /app/dist ./dist
 COPY server.js .
-EXPOSE 3000
+# Railway injects $PORT — node server.js reads process.env.PORT
 CMD ["node", "server.js"]
